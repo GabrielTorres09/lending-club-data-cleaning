@@ -11,8 +11,8 @@
 
 | Nombre | Programa |
 |--------|----------|
-| Gabriel David Torres Montiel | Ingeniería de Sistemas · UTB |
-| Jose Angel Gomez Agamez | Ingeniería de Sistemas · UTB |
+| Gabriel David Torres Montiel | ciencias de datos · UTB |
+| Jose Angel Gomez Agamez | ciencias de datos · UTB |
 
 
 ##  Descripción del proyecto
