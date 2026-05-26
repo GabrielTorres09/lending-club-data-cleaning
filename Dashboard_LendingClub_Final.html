@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lending Club — Dashboard Completo en Español</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-deep:        #0a0e1a;
+  --bg-mid:         #0f1525;
+  --bg-card:        rgba(255,255,255,0.04);
+  --bg-card-hover:  rgba(255,255,255,0.07);
+  --bg-nav:         rgba(255,255,255,0.06);
+  --bg-nav-active:  rgba(255,255,255,0.12);
+  --bg-kpi:         rgba(255,255,255,0.05);
+  --bg-bar:         rgba(255,255,255,0.08);
+  --text-primary:   #f0f4ff;
+  --text-secondary: #8a93b4;
+  --text-tertiary:  #5a6180;
+  --border:         rgba(255,255,255,0.08);
+  --border-card:    rgba(255,255,255,0.1);
+  --blue:   #4d8ef0;
+  --green:  #2db87e;
+  --amber:  #e09c2f;
+  --red:    #e55454;
+  --violet: #7c6fcd;
+  --pink:   #d4537e;
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-sans:    'DM Sans', system-ui, sans-serif;
+  --radius-card: 14px;
+  --radius-sm:   8px;
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-deep);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(77,142,240,.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 110%, rgba(124,111,205,.16) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 35% at 50% 50%, rgba(13,22,45,.9) 0%, transparent 100%);
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 2rem 4rem;
+}
+
+/* ── Hero ── */
+.hero { margin-bottom: 2.5rem; text-align: center; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 500; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--blue);
+  background: rgba(77,142,240,.12); border: 1px solid rgba(77,142,240,.25);
+  border-radius: 20px; padding: 4px 14px; margin-bottom: 1.1rem;
+}
+.hero h1 {
+  font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 400; line-height: 1.1; color: var(--text-primary);
+  letter-spacing: -.01em; margin-bottom: .6rem;
+}
+.hero h1 em { font-style: italic; color: var(--blue); }
+.hero-sub { font-size: 14px; color: var(--text-secondary); font-weight: 300; }
+.hero-meta {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.2rem; margin-top: 1.2rem; flex-wrap: wrap;
+}
+.meta-pill {
+  font-size: 12px; color: var(--text-secondary);
+  background: rgba(255,255,255,.05); border: 1px solid var(--border);
+  border-radius: 20px; padding: 4px 12px;
+  display: flex; align-items: center; gap: 5px;
+}
+.meta-pill i { font-size: 12px; color: var(--green); }
+.badge-clean {
+  font-size: 11.5px; padding: 4px 12px; border-radius: 20px;
+  background: rgba(45,184,126,.15); color: var(--green); font-weight: 500;
+  border: 1px solid rgba(45,184,126,.3);
+  display: inline-flex; align-items: center; gap: 5px;
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-card), transparent);
+  margin-bottom: 2rem;
+}
+
+/* ── Nav ── */
+.nav {
+  display: flex; gap: 4px; margin-bottom: 1.75rem;
+  background: var(--bg-nav); padding: 4px; border-radius: 12px;
+  width: fit-content; border: 1px solid var(--border);
+  backdrop-filter: blur(8px); flex-wrap: wrap;
+}
+.nav button {
+  font-size: 13px; font-family: var(--font-sans); font-weight: 400;
+  padding: 7px 18px; border-radius: 9px; border: none;
+  background: transparent; color: var(--text-secondary);
+  cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.nav button:hover { color: var(--text-primary); background: rgba(255,255,255,.06); }
+.nav button.on {
+  background: var(--bg-nav-active); color: var(--text-primary);
+  font-weight: 500; border: 1px solid var(--border-card);
+  box-shadow: 0 2px 10px rgba(0,0,0,.3);
+}
+
+/* ── Panels ── */
+.panel { display: none; }
+.panel.on { display: block; }
+
+/* ── KPI grid ── */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 1.5rem; }
+.kpi {
+  background: var(--bg-kpi); border: 1px solid var(--border);
+  border-radius: var(--radius-card); padding: 16px 18px;
+  transition: background .2s, border-color .2s;
+}
+.kpi:hover { background: var(--bg-card-hover); border-color: var(--border-card); }
+.kpi-icon { font-size: 20px; margin-bottom: 10px; }
+.kpi-val { font-family: var(--font-display); font-size: 26px; font-weight: 400; color: var(--text-primary); line-height: 1; }
+.kpi-lbl { font-size: 12px; color: var(--text-secondary); margin-top: 5px; font-weight: 300; }
+.kpi-delta { font-size: 11px; margin-top: 8px; padding: 2px 9px; border-radius: 20px; display: inline-block; font-weight: 500; }
+
+/* ── Cards ── */
+.dg { display: grid; gap: 14px; }
+.dg-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.dg-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.dg-1 { grid-template-columns: 1fr; }
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-card); padding: 1.1rem 1.3rem;
+  backdrop-filter: blur(4px); transition: border-color .2s;
+}
+.card:hover { border-color: var(--border-card); }
+.card-head { margin-bottom: 14px; }
+.card-head h3 { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 3px; letter-spacing: -.01em; }
+.card-head p { font-size: 12px; color: var(--text-secondary); font-weight: 300; }
+
+/* ── Legend ── */
+.leg { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+.leg span { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-secondary); }
+.leg-sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+/* ── Flow ── */
+.flow { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding: 4px 0; }
+.fstep {
+  flex: 1; min-width: 88px;
+  background: rgba(255,255,255,.04); border: 1px solid var(--border);
+  border-radius: 10px; padding: 13px 10px; text-align: center;
+}
+.fstep-num {
+  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px;
+  display: inline-block; margin-bottom: 7px; font-family: var(--font-display);
+}
+.fstep-title { font-size: 12px; font-weight: 500; color: var(--text-primary); margin-bottom: 3px; }
+.fstep-sub { font-size: 11px; color: var(--text-secondary); }
+.farr { display: flex; align-items: center; padding: 0 5px; color: var(--text-tertiary); font-size: 16px; }
+
+/* ── Bar rows ── */
+.bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.bar-lbl { font-size: 11px; color: var(--text-secondary); width: 200px; text-align: right; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-track { flex: 1; height: 8px; background: var(--bg-bar); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width .6s ease; }
+.bar-pct { font-size: 11px; color: var(--text-secondary); width: 44px; flex-shrink: 0; }
+
+/* ── Progress ── */
+.prog-wrap { margin-bottom: 12px; }
+.prog-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.prog-header span { font-size: 12px; color: var(--text-secondary); }
+.prog-header strong { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+.prog-track { height: 6px; background: var(--bg-bar); border-radius: 3px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 3px; }
+
+/* ── Delta chips ── */
+.delta-blue   { background: rgba(77,142,240,.15);  color: #7db3f5; }
+.delta-green  { background: rgba(45,184,126,.15);  color: #5dd4a0; }
+.delta-amber  { background: rgba(224,156,47,.15);  color: #e8b56a; }
+.delta-red    { background: rgba(229,84,84,.15);   color: #ee8888; }
+.delta-violet { background: rgba(124,111,205,.15); color: #a99de8; }
+
+/* ── Stat row (para análisis) ── */
+.stat-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; border-radius: 8px;
+  background: rgba(255,255,255,.03); border: 1px solid var(--border);
+  margin-bottom: 8px; transition: background .2s;
+}
+.stat-row:hover { background: rgba(255,255,255,.06); }
+.stat-label { font-size: 12px; color: var(--text-secondary); font-weight: 300; }
+.stat-value { font-family: var(--font-display); font-size: 18px; color: var(--text-primary); }
+.stat-badge { font-size: 11px; padding: 2px 9px; border-radius: 20px; }
+
+/* ── Tabla de columnas ── */
+.col-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.col-table th { color: var(--text-secondary); font-weight: 500; text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+.col-table td { padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,.04); color: var(--text-secondary); vertical-align: top; }
+.col-table td:first-child { color: var(--text-primary); font-weight: 400; font-family: monospace; font-size: 11px; }
+.col-table td:nth-child(2) { color: var(--blue); font-weight: 500; font-family: monospace; font-size: 11px; }
+.col-table tr:hover td { background: rgba(255,255,255,.03); }
+.cat-badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 500; margin-bottom: 2px; }
+
+/* ── Search ── */
+.search-box {
+  width: 100%; background: rgba(255,255,255,.05);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 9px 14px; color: var(--text-primary);
+  font-family: var(--font-sans); font-size: 13px;
+  margin-bottom: 12px; outline: none;
+  transition: border-color .2s;
+}
+.search-box:focus { border-color: var(--blue); }
+.search-box::placeholder { color: var(--text-tertiary); }
+
+/* ── Autores ── */
+.authors-bar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.2rem; flex-wrap: wrap; margin-bottom: 1rem;
+}
+.author-chip {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(77,142,240,.08); border: 1px solid rgba(77,142,240,.22);
+  border-radius: 30px; padding: 6px 16px 6px 8px;
+}
+.author-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--violet));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; color: #fff; flex-shrink: 0;
+}
+.author-name { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+
+/* ── Objetivo / Ética items ── */
+.obj-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 14px; border-radius: 8px;
+  background: rgba(255,255,255,.03); border: 1px solid var(--border);
+  margin-bottom: 8px; transition: background .2s;
+}
+.obj-item:hover { background: rgba(255,255,255,.055); }
+.obj-item-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0; margin-top: 1px;
+}
+.obj-item-text h4 { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 3px; }
+.obj-item-text p  { font-size: 12px; color: var(--text-secondary); font-weight: 300; line-height: 1.55; }
+.ethics-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 500;
+  margin: 3px 3px 3px 0;
+}
+
+@media (max-width: 700px) {
+  .kpis { grid-template-columns: repeat(2,1fr); }
+  .dg-2, .dg-3 { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 1.8rem; }
+  .page { padding: 2rem 1rem 3rem; }
+  .bar-lbl { width: 110px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <i class="ti ti-chart-bar"></i>
+      Ciencia de Datos · UTB
+    </div>
+    <h1>Lending Club —<br><em>Dashboard</em></h1>
+    <p class="hero-sub">Dataset de préstamos aprobados · 2007–2018 · Universidad Tecnológica de Bolívar</p>
+    <div class="hero-meta">
+      <span class="meta-pill"><i class="ti ti-table"></i> 2.26M filas</span>
+      <span class="meta-pill"><i class="ti ti-columns"></i> 151 → 107 columnas</span>
+      <span class="meta-pill"><i class="ti ti-calendar"></i> 11 años de datos</span>
+      <span class="meta-pill"><i class="ti ti-flag"></i> Nombres en español</span>
+      <span class="badge-clean"><i class="ti ti-circle-check"></i> Limpieza completada</span>
+    </div>
+    <div class="authors-bar" style="margin-top:1.2rem">
+      <div class="author-chip">
+        <div class="author-avatar">GT</div>
+        <span class="author-name">Gabriel David Torres Montiel</span>
+      </div>
+      <div class="author-chip">
+        <div class="author-avatar">JG</div>
+        <span class="author-name">Jose Angel Gomez Agamez</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── Nav ── -->
+  <div class="nav">
+    <button class="on" onclick="sw('resumen',this)"><i class="ti ti-layout-dashboard"></i>Resumen</button>
+    <button onclick="sw('nulos',this)"><i class="ti ti-alert-triangle"></i>Nulos</button>
+    <button onclick="sw('dupes',this)"><i class="ti ti-copy"></i>Duplicados</button>
+    <button onclick="sw('analisis',this)"><i class="ti ti-cash"></i>Análisis</button>
+    <button onclick="sw('columnas',this)"><i class="ti ti-list"></i>Columnas</button>
+    <button onclick="sw('dataset',this)"><i class="ti ti-database"></i>Dataset</button>
+    <button onclick="sw('proyecto',this)"><i class="ti ti-info-circle"></i>Proyecto</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL 1: RESUMEN
+  ══════════════════════════════════════════ -->
+  <div id="p-resumen" class="panel on">
+    <div class="kpis">
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--blue)"><i class="ti ti-table"></i></div>
+        <div class="kpi-val">2.26M</div>
+        <div class="kpi-lbl">Filas totales</div>
+        <span class="kpi-delta delta-blue">Sin cambio</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--green)"><i class="ti ti-columns"></i></div>
+        <div class="kpi-val">107</div>
+        <div class="kpi-lbl">Columnas finales</div>
+        <span class="kpi-delta delta-green">−44 eliminadas</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--amber)"><i class="ti ti-circle-minus"></i></div>
+        <div class="kpi-val">0</div>
+        <div class="kpi-lbl">Nulos restantes</div>
+        <span class="kpi-delta delta-green">100% resueltos</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--violet)"><i class="ti ti-copy-off"></i></div>
+        <div class="kpi-val">0</div>
+        <div class="kpi-lbl">Duplicados</div>
+        <span class="kpi-delta delta-green">Dataset limpio</span>
+      </div>
+    </div>
+
+    <div class="dg dg-2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-head"><h3>Columnas antes vs después</h3><p>Reducción del 29% por eliminación de columnas vacías</p></div>
+        <div class="leg">
+          <span><span class="leg-sq" style="background:var(--blue)"></span>Antes — 151</span>
+          <span><span class="leg-sq" style="background:var(--green)"></span>Después — 107</span>
+        </div>
+        <div style="position:relative;height:190px"><canvas id="ch1"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Tratamiento aplicado por columna</h3><p>Distribución del tratamiento aplicado</p></div>
+        <div class="leg">
+          <span><span class="leg-sq" style="background:var(--red)"></span>Eliminadas — 44</span>
+          <span><span class="leg-sq" style="background:var(--amber)"></span>Imputadas mod. — 25</span>
+          <span><span class="leg-sq" style="background:var(--green)"></span>Imputadas bajo — 18</span>
+          <span><span class="leg-sq" style="background:var(--blue)"></span>Sin nulos — 64</span>
+        </div>
+        <div style="position:relative;height:190px"><canvas id="ch2"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-head"><h3>Flujo completo del proyecto</h3><p>Pasos realizados de inicio a fin</p></div>
+      <div class="flow">
+        <div class="fstep">
+          <div class="fstep-num" style="background:rgba(77,142,240,.15);color:var(--blue)">01</div>
+          <div style="font-size:18px;color:var(--blue);margin-bottom:5px"><i class="ti ti-download"></i></div>
+          <div class="fstep-title">Descarga</div>
+          <div class="fstep-sub">Kaggle API</div>
+        </div>
+        <div class="farr">→</div>
+        <div class="fstep">
+          <div class="fstep-num" style="background:rgba(124,111,205,.15);color:var(--violet)">02</div>
+          <div style="font-size:18px;color:var(--violet);margin-bottom:5px"><i class="ti ti-search"></i></div>
+          <div class="fstep-title">Exploración</div>
+          <div class="fstep-sub">2.26M × 151</div>
+        </div>
+        <div class="farr">→</div>
+        <div class="fstep">
+          <div class="fstep-num" style="background:rgba(224,156,47,.15);color:var(--amber)">03</div>
+          <div style="font-size:18px;color:var(--amber);margin-bottom:5px"><i class="ti ti-alert-triangle"></i></div>
+          <div class="fstep-title">Detección nulos</div>
+          <div class="fstep-sub">87 columnas</div>
+        </div>
+        <div class="farr">→</div>
+        <div class="fstep">
+          <div class="fstep-num" style="background:rgba(229,84,84,.15);color:var(--red)">04</div>
+          <div style="font-size:18px;color:var(--red);margin-bottom:5px"><i class="ti ti-trash"></i></div>
+          <div class="fstep-title">Eliminación</div>
+          <div class="fstep-sub">44 columnas</div>
+        </div>
+        <div class="farr">→</div>
+        <div class="fstep">
+          <div class="fstep-num" style="background:rgba(224,156,47,.15);color:var(--amber)">05</div>
+          <div style="font-size:18px;color:var(--amber);margin-bottom:5px"><i class="ti ti-edit"></i></div>
+          <div class="fstep-title">Imputación</div>
+          <div class="fstep-sub">43 columnas</div>
+        </div>
+        <div class="farr">→</div>
+        <div class="fstep">
+          <div class="fstep-num" style="background:rgba(124,111,205,.15);color:var(--violet)">06</div>
+          <div style="font-size:18px;color:var(--violet);margin-bottom:5px"><i class="ti ti-copy"></i></div>
+          <div class="fstep-title">Duplicados</div>
+          <div class="fstep-sub">0 hallados</div>
+        </div>
+        <div class="farr">→</div>
+        <div class="fstep" style="border-color:var(--green)">
+          <div class="fstep-num" style="background:rgba(45,184,126,.15);color:var(--green)">07</div>
+          <div style="font-size:18px;color:var(--green);margin-bottom:5px"><i class="ti ti-circle-check"></i></div>
+          <div class="fstep-title">Dataset limpio</div>
+          <div class="fstep-sub">2.26M × 107</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL 2: NULOS
+  ══════════════════════════════════════════ -->
+  <div id="p-nulos" class="panel">
+    <div class="kpis">
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--red)"><i class="ti ti-alert-circle"></i></div>
+        <div class="kpi-val">87</div>
+        <div class="kpi-lbl">Columnas con nulos</div>
+        <span class="kpi-delta delta-red">57% del total</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--red)"><i class="ti ti-trash"></i></div>
+        <div class="kpi-val">44</div>
+        <div class="kpi-lbl">Columnas eliminadas</div>
+        <span class="kpi-delta delta-red">&gt;50% nulos</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--amber)"><i class="ti ti-edit"></i></div>
+        <div class="kpi-val">43</div>
+        <div class="kpi-lbl">Columnas imputadas</div>
+        <span class="kpi-delta delta-amber">mediana / moda</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--green)"><i class="ti ti-check"></i></div>
+        <div class="kpi-val">0</div>
+        <div class="kpi-lbl">Nulos tras limpieza</div>
+        <span class="kpi-delta delta-green">100% resuelto</span>
+      </div>
+    </div>
+
+    <div class="dg dg-1" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-head"><h3>Top 15 columnas con más valores nulos (nombres en español)</h3><p>Columnas en rojo superan el umbral del 50% y fueron eliminadas</p></div>
+        <div id="bars-nulos"></div>
+      </div>
+    </div>
+
+    <div class="dg dg-2">
+      <div class="card">
+        <div class="card-head"><h3>Método de imputación</h3><p>Según el tipo de dato de cada columna</p></div>
+        <div class="leg">
+          <span><span class="leg-sq" style="background:var(--violet)"></span>Mediana (numéricas) — 29</span>
+          <span><span class="leg-sq" style="background:var(--pink)"></span>Moda (texto) — 14</span>
+        </div>
+        <div style="position:relative;height:200px"><canvas id="ch5"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Progreso de limpieza por grupo</h3><p>Porcentaje resuelto en cada categoría de nulos</p></div>
+        <div id="prog-bars"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL 3: DUPLICADOS
+  ══════════════════════════════════════════ -->
+  <div id="p-dupes" class="panel">
+    <div class="kpis">
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--blue)"><i class="ti ti-table"></i></div>
+        <div class="kpi-val">2,260,668</div>
+        <div class="kpi-lbl">Filas totales</div>
+        <span class="kpi-delta delta-blue">Dataset original</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--green)"><i class="ti ti-copy-off"></i></div>
+        <div class="kpi-val">0</div>
+        <div class="kpi-lbl">Duplicados exactos</div>
+        <span class="kpi-delta delta-green">Ninguno hallado</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--green)"><i class="ti ti-id"></i></div>
+        <div class="kpi-val">0</div>
+        <div class="kpi-lbl">IDs duplicados</div>
+        <span class="kpi-delta delta-green">IDs únicos</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--green)"><i class="ti ti-shield-check"></i></div>
+        <div class="kpi-val">100%</div>
+        <div class="kpi-lbl">Integridad</div>
+        <span class="kpi-delta delta-green">Datos únicos</span>
+      </div>
+    </div>
+
+    <div class="dg dg-1" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-head"><h3>Pasos de detección de duplicados</h3><p>Proceso aplicado para verificar integridad del dataset</p></div>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:4px">
+          <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(77,142,240,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:16px;color:var(--blue)"><i class="ti ti-search"></i></div>
+            <div style="font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:5px">Revisión exacta</div>
+            <div style="font-size:12px;color:var(--text-secondary);font-weight:300">Filas con valores idénticos en todas las columnas usando <code style="font-size:11px">df.duplicated()</code></div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(124,111,205,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:16px;color:var(--violet)"><i class="ti ti-id"></i></div>
+            <div style="font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:5px">Revisión por ID</div>
+            <div style="font-size:12px;color:var(--text-secondary);font-weight:300">Verificación del ID único del préstamo con <code style="font-size:11px">subset=['id']</code></div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(45,184,126,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:16px;color:var(--green)"><i class="ti ti-circle-check"></i></div>
+            <div style="font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:5px">Resultado</div>
+            <div style="font-size:12px;color:var(--text-secondary);font-weight:300">0 duplicados encontrados. El dataset ya contaba con registros únicos.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Filas antes vs después (duplicados)</h3><p>El conteo de filas no cambió — confirma la calidad del dataset original</p></div>
+      <div class="leg">
+        <span><span class="leg-sq" style="background:var(--blue)"></span>Antes — 2,260,668</span>
+        <span><span class="leg-sq" style="background:var(--green)"></span>Después — 2,260,668</span>
+      </div>
+      <div style="position:relative;height:180px"><canvas id="ch7"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL 4: ANÁLISIS DE PRÉSTAMOS (NUEVO)
+  ══════════════════════════════════════════ -->
+  <div id="p-analisis" class="panel">
+    <div class="kpis">
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--green)"><i class="ti ti-trending-up"></i></div>
+        <div class="kpi-val">$40,000</div>
+        <div class="kpi-lbl">Préstamo más grande</div>
+        <span class="kpi-delta delta-green">monto_solicitado</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--blue)"><i class="ti ti-trending-down"></i></div>
+        <div class="kpi-val">$500</div>
+        <div class="kpi-lbl">Préstamo más pequeño</div>
+        <span class="kpi-delta delta-blue">monto_solicitado</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--violet)"><i class="ti ti-math-avg"></i></div>
+        <div class="kpi-val">$14,755</div>
+        <div class="kpi-lbl">Préstamo promedio</div>
+        <span class="kpi-delta delta-violet">media del dataset</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--amber)"><i class="ti ti-cash"></i></div>
+        <div class="kpi-val">$33.3B</div>
+        <div class="kpi-lbl">Total prestado</div>
+        <span class="kpi-delta delta-amber">2007–2018</span>
+      </div>
+    </div>
+
+    <!-- Estadísticas clave -->
+    <div class="dg dg-2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-head"><h3>Estadísticas del monto solicitado</h3><p>Distribución de los montos de préstamos en el dataset</p></div>
+        <div class="stat-row">
+          <span class="stat-label">Monto más alto registrado</span>
+          <span class="stat-value" style="color:var(--green)">$40,000</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Monto más bajo registrado</span>
+          <span class="stat-value" style="color:var(--blue)">$500</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Monto promedio (media)</span>
+          <span class="stat-value">$14,755</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Monto mediano (percentil 50)</span>
+          <span class="stat-value">$12,000</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Percentil 75 (mayoría pide menos de)</span>
+          <span class="stat-value">$20,000</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Total acumulado prestado</span>
+          <span class="stat-value" style="color:var(--amber)">$33.3B</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Estadísticas de tasa de interés</h3><p>Tasas anuales cobradas a los prestatarios</p></div>
+        <div class="stat-row">
+          <span class="stat-label">Tasa mínima registrada</span>
+          <span class="stat-value" style="color:var(--green)">5.32%</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Tasa máxima registrada</span>
+          <span class="stat-value" style="color:var(--red)">30.99%</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Tasa promedio</span>
+          <span class="stat-value">13.26%</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Tasa mediana</span>
+          <span class="stat-value">12.99%</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Ingreso anual promedio del solicitante</span>
+          <span class="stat-value">$74,600</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Ingreso anual máximo registrado</span>
+          <span class="stat-value" style="color:var(--violet)">$9.5M</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dg dg-2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-head"><h3>Estado del préstamo</h3><p>¿Qué pasó con los préstamos otorgados?</p></div>
+        <div class="leg">
+          <span><span class="leg-sq" style="background:var(--green)"></span>Pagado completamente</span>
+          <span><span class="leg-sq" style="background:var(--blue)"></span>Vigente (en curso)</span>
+          <span><span class="leg-sq" style="background:var(--red)"></span>Cancelado por impago</span>
+          <span><span class="leg-sq" style="background:var(--amber)"></span>En mora</span>
+          <span><span class="leg-sq" style="background:var(--violet)"></span>Otros</span>
+        </div>
+        <div style="position:relative;height:210px"><canvas id="ch-estado"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Propósito del préstamo</h3><p>¿Para qué pidieron el dinero?</p></div>
+        <div id="bars-proposito"></div>
+      </div>
+    </div>
+
+    <div class="dg dg-2">
+      <div class="card">
+        <div class="card-head"><h3>Calificación del préstamo</h3><p>A = menor riesgo (tasa baja) → G = mayor riesgo (tasa alta)</p></div>
+        <div class="leg">
+          <span><span class="leg-sq" style="background:#2db87e"></span>A — muy seguro</span>
+          <span><span class="leg-sq" style="background:#4d8ef0"></span>B — seguro</span>
+          <span><span class="leg-sq" style="background:#7c6fcd"></span>C — moderado</span>
+          <span><span class="leg-sq" style="background:#e09c2f"></span>D — riesgoso</span>
+          <span><span class="leg-sq" style="background:#e07a2f"></span>E — muy riesgoso</span>
+          <span><span class="leg-sq" style="background:#e55454"></span>F/G — alto riesgo</span>
+        </div>
+        <div style="position:relative;height:210px"><canvas id="ch-grade"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Plazo del préstamo</h3><p>Duración en meses para pagar el préstamo</p></div>
+        <div class="leg">
+          <span><span class="leg-sq" style="background:var(--blue)"></span>36 meses (3 años)</span>
+          <span><span class="leg-sq" style="background:var(--violet)"></span>60 meses (5 años)</span>
+        </div>
+        <div style="position:relative;height:210px"><canvas id="ch-plazo"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL 5: COLUMNAS EN ESPAÑOL (NUEVO)
+  ══════════════════════════════════════════ -->
+  <div id="p-columnas" class="panel">
+    <div class="kpis">
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--blue)"><i class="ti ti-list"></i></div>
+        <div class="kpi-val">107</div>
+        <div class="kpi-lbl">Columnas en el dataset limpio</div>
+        <span class="kpi-delta delta-blue">tras limpieza</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--green)"><i class="ti ti-language"></i></div>
+        <div class="kpi-val">90+</div>
+        <div class="kpi-lbl">Columnas traducidas</div>
+        <span class="kpi-delta delta-green">inglés → español</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--violet)"><i class="ti ti-category"></i></div>
+        <div class="kpi-val">5</div>
+        <div class="kpi-lbl">Categorías temáticas</div>
+        <span class="kpi-delta delta-violet">agrupadas</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--amber)"><i class="ti ti-search"></i></div>
+        <div class="kpi-val">—</div>
+        <div class="kpi-lbl">Buscador activo</div>
+        <span class="kpi-delta delta-amber">filtro en tiempo real</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Diccionario de columnas — inglés → español</h3><p>Busca por nombre original, nombre en español o categoría</p></div>
+      <input class="search-box" type="text" id="col-search" placeholder="Buscar columna... (ej: monto, ingreso, tasa, estado...)" oninput="filtrarColumnas()">
+      <div style="overflow-x:auto">
+        <table class="col-table">
+          <thead>
+            <tr>
+              <th>Columna original (inglés)</th>
+              <th>Nombre en español</th>
+              <th>Categoría</th>
+              <th>Descripción</th>
+            </tr>
+          </thead>
+          <tbody id="col-tbody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--text-tertiary)" id="col-count"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL 6: DATASET
+  ══════════════════════════════════════════ -->
+  <div id="p-dataset" class="panel">
+    <div class="kpis">
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--blue)"><i class="ti ti-building"></i></div>
+        <div class="kpi-val" style="font-size:18px">Lending Club</div>
+        <div class="kpi-lbl">Empresa</div>
+        <span class="kpi-delta delta-blue">EE. UU.</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--violet)"><i class="ti ti-calendar"></i></div>
+        <div class="kpi-val" style="font-size:18px">2007–2018</div>
+        <div class="kpi-lbl">Período</div>
+        <span class="kpi-delta delta-violet">11 años</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--amber)"><i class="ti ti-brand-kaggle"></i></div>
+        <div class="kpi-val" style="font-size:18px">Kaggle</div>
+        <div class="kpi-lbl">Fuente</div>
+        <span class="kpi-delta delta-amber">Acceso libre</span>
+      </div>
+      <div class="kpi">
+        <div class="kpi-icon" style="color:var(--green)"><i class="ti ti-file-text"></i></div>
+        <div class="kpi-val" style="font-size:18px">CSV</div>
+        <div class="kpi-lbl">Formato</div>
+        <span class="kpi-delta delta-green">Aprobados</span>
+      </div>
+    </div>
+
+    <div class="dg dg-2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-head"><h3>Tipos de datos en el dataset</h3><p>Distribución de columnas por tipo de dato</p></div>
+        <div class="leg">
+          <span><span class="leg-sq" style="background:var(--blue)"></span>float64 — 94</span>
+          <span><span class="leg-sq" style="background:var(--violet)"></span>object — 41</span>
+          <span><span class="leg-sq" style="background:var(--green)"></span>int64 — 16</span>
+        </div>
+        <div style="position:relative;height:200px"><canvas id="ch8"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Columnas por categoría temática</h3><p>Agrupación según el tipo de información que contienen</p></div>
+        <div class="leg">
+          <span><span class="leg-sq" style="background:var(--blue)"></span>Pagos — 40</span>
+          <span><span class="leg-sq" style="background:var(--violet)"></span>Préstamo — 35</span>
+          <span><span class="leg-sq" style="background:var(--green)"></span>Crédito — 30</span>
+          <span><span class="leg-sq" style="background:var(--amber)"></span>Prestatario — 28</span>
+          <span><span class="leg-sq" style="background:var(--pink)"></span>Otros — 18</span>
+        </div>
+        <div style="position:relative;height:200px"><canvas id="ch9"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Comparación general antes vs después de la limpieza</h3><p>Impacto total del proceso de limpieza en el dataset</p></div>
+      <div class="leg">
+        <span><span class="leg-sq" style="background:var(--blue)"></span>Antes</span>
+        <span><span class="leg-sq" style="background:var(--green)"></span>Después</span>
+      </div>
+      <div style="position:relative;height:200px"><canvas id="ch3"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PANEL 7: PROYECTO (Objetivo · Métodos · Ética)
+  ══════════════════════════════════════════ -->
+  <div id="p-proyecto" class="panel">
+
+    <!-- Autores -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-head">
+        <h3><i class="ti ti-users" style="color:var(--blue);margin-right:6px"></i>Autores del proyecto</h3>
+        <p>Universidad Tecnológica de Bolívar · Ciencia de Datos</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+        <div class="obj-item" style="border-color:rgba(77,142,240,.25)">
+          <div class="obj-item-icon" style="background:rgba(77,142,240,.15);color:var(--blue)"><i class="ti ti-user"></i></div>
+          <div class="obj-item-text">
+            <h4>Gabriel David Torres Montiel</h4>
+            <p>Ingeniería de Sistemas · UTB · Cartagena, Colombia</p>
+          </div>
+        </div>
+        <div class="obj-item" style="border-color:rgba(124,111,205,.25)">
+          <div class="obj-item-icon" style="background:rgba(124,111,205,.15);color:var(--violet)"><i class="ti ti-user"></i></div>
+          <div class="obj-item-text">
+            <h4>Jose Angel Gomez Agamez</h4>
+            <p>Ingeniería de Sistemas · UTB · Cartagena, Colombia</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Objetivo y Problema -->
+    <div class="dg dg-2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-head">
+          <h3><i class="ti ti-target" style="color:var(--blue);margin-right:6px"></i>Objetivo del proyecto</h3>
+          <p>¿Qué queremos lograr?</p>
+        </div>
+        <div class="obj-item">
+          <div class="obj-item-icon" style="background:rgba(77,142,240,.15);color:var(--blue)"><i class="ti ti-bulb"></i></div>
+          <div class="obj-item-text">
+            <h4>Objetivo principal</h4>
+            <p>Preparar, limpiar y analizar el dataset de Lending Club (2007–2018) para entender el comportamiento de préstamos de consumo en EE. UU., como base para futuros modelos predictivos de riesgo crediticio.</p>
+          </div>
+        </div>
+        <div class="obj-item">
+          <div class="obj-item-icon" style="background:rgba(45,184,126,.15);color:var(--green)"><i class="ti ti-database"></i></div>
+          <div class="obj-item-text">
+            <h4>Dataset utilizado</h4>
+            <p>2.26 millones de préstamos aprobados entre 2007 y 2018, descargados desde Kaggle mediante API. Incluye variables financieras, crediticias y demográficas de cada solicitante.</p>
+          </div>
+        </div>
+        <div class="obj-item">
+          <div class="obj-item-icon" style="background:rgba(224,156,47,.15);color:var(--amber)"><i class="ti ti-chart-line"></i></div>
+          <div class="obj-item-text">
+            <h4>Proyección futura</h4>
+            <p>Con el dataset limpio se buscará entrenar modelos de clasificación (regresión logística, árbol de decisión o random forest) para predecir la probabilidad de impago de un préstamo.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Problema -->
+      <div class="card">
+        <div class="card-head">
+          <h3><i class="ti ti-alert-circle" style="color:var(--red);margin-right:6px"></i>Problema identificado</h3>
+          <p>¿Qué desafío de datos resolvimos?</p>
+        </div>
+        <div class="obj-item">
+          <div class="obj-item-icon" style="background:rgba(229,84,84,.15);color:var(--red)"><i class="ti ti-circle-x"></i></div>
+          <div class="obj-item-text">
+            <h4>Alta tasa de valores nulos</h4>
+            <p>El 57% de las columnas (87 de 151) tenían valores faltantes. El 50% de ellas superaba el umbral del 50% de nulos, haciendo imposible su uso directo en modelos.</p>
+          </div>
+        </div>
+        <div class="obj-item">
+          <div class="obj-item-icon" style="background:rgba(224,156,47,.15);color:var(--amber)"><i class="ti ti-adjustments"></i></div>
+          <div class="obj-item-text">
+            <h4>Dimensionalidad excesiva</h4>
+            <p>El dataset original contaba con 151 columnas, muchas redundantes o con información de baja calidad. Se redujo a 107 columnas manteniendo toda la información relevante.</p>
+          </div>
+        </div>
+        <div class="obj-item">
+          <div class="obj-item-icon" style="background:rgba(124,111,205,.15);color:var(--violet)"><i class="ti ti-language"></i></div>
+          <div class="obj-item-text">
+            <h4>Nomenclatura en inglés</h4>
+            <p>Todas las columnas estaban en inglés técnico financiero. Se tradujo y documentó cada columna al español con su descripción para facilitar el análisis y la presentación.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Métodos -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-head">
+        <h3><i class="ti ti-settings" style="color:var(--violet);margin-right:6px"></i>Métodos y técnicas aplicadas</h3>
+        <p>Proceso metodológico de limpieza y preparación de datos</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+        <div class="obj-item" style="flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="obj-item-icon" style="background:rgba(77,142,240,.15);color:var(--blue)"><i class="ti ti-download"></i></div>
+            <strong style="font-size:12px;color:var(--text-primary)">Obtención de datos</strong>
+          </div>
+          <p style="font-size:12px;color:var(--text-secondary);font-weight:300;line-height:1.5">Descarga automatizada desde Kaggle API con Python (<code style="font-size:11px">kaggle datasets download</code>). Dataset en formato CSV.</p>
+        </div>
+        <div class="obj-item" style="flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="obj-item-icon" style="background:rgba(229,84,84,.15);color:var(--red)"><i class="ti ti-trash"></i></div>
+            <strong style="font-size:12px;color:var(--text-primary)">Eliminación de columnas</strong>
+          </div>
+          <p style="font-size:12px;color:var(--text-secondary);font-weight:300;line-height:1.5">Se eliminaron 44 columnas con más del 50% de valores nulos usando <code style="font-size:11px">df.dropna(thresh=...)</code> y análisis de nulidad por columna.</p>
+        </div>
+        <div class="obj-item" style="flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="obj-item-icon" style="background:rgba(124,111,205,.15);color:var(--violet)"><i class="ti ti-edit"></i></div>
+            <strong style="font-size:12px;color:var(--text-primary)">Imputación</strong>
+          </div>
+          <p style="font-size:12px;color:var(--text-secondary);font-weight:300;line-height:1.5">29 columnas numéricas imputadas con <strong>mediana</strong>. 14 columnas de texto imputadas con <strong>moda</strong>. Estrategia según tipo de dato.</p>
+        </div>
+        <div class="obj-item" style="flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="obj-item-icon" style="background:rgba(45,184,126,.15);color:var(--green)"><i class="ti ti-copy-off"></i></div>
+            <strong style="font-size:12px;color:var(--text-primary)">Deduplicación</strong>
+          </div>
+          <p style="font-size:12px;color:var(--text-secondary);font-weight:300;line-height:1.5">Verificación de duplicados con <code style="font-size:11px">df.duplicated()</code> (exactos) y <code style="font-size:11px">subset=['id']</code> (por ID). Resultado: 0 duplicados.</p>
+        </div>
+        <div class="obj-item" style="flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="obj-item-icon" style="background:rgba(224,156,47,.15);color:var(--amber)"><i class="ti ti-search"></i></div>
+            <strong style="font-size:12px;color:var(--text-primary)">Análisis exploratorio</strong>
+          </div>
+          <p style="font-size:12px;color:var(--text-secondary);font-weight:300;line-height:1.5">EDA con Pandas y visualizaciones. Estadísticas descriptivas (media, mediana, percentiles) de montos, tasas e ingresos. Distribuciones por estado y propósito.</p>
+        </div>
+        <div class="obj-item" style="flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="obj-item-icon" style="background:rgba(212,83,126,.15);color:var(--pink)"><i class="ti ti-language"></i></div>
+            <strong style="font-size:12px;color:var(--text-primary)">Traducción y documentación</strong>
+          </div>
+          <p style="font-size:12px;color:var(--text-secondary);font-weight:300;line-height:1.5">Las 107 columnas finales fueron renombradas al español con descripciones claras, organizadas en 5 categorías temáticas para facilitar su uso.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ética y Privacidad -->
+    <div class="card">
+      <div class="card-head">
+        <h3><i class="ti ti-shield-check" style="color:var(--green);margin-right:6px"></i>Ética, privacidad y limitaciones</h3>
+        <p>Consideraciones responsables sobre el uso de datos financieros</p>
+      </div>
+      <div class="dg dg-2" style="gap:10px">
+        <div>
+          <div class="obj-item" style="border-color:rgba(229,84,84,.2)">
+            <div class="obj-item-icon" style="background:rgba(229,84,84,.12);color:var(--red)"><i class="ti ti-alert-triangle"></i></div>
+            <div class="obj-item-text">
+              <h4>Sesgos potenciales del dataset</h4>
+              <p>El dataset puede contener sesgos históricos de aprobación de crédito basados en variables como estado de residencia, ingreso o tipo de empleo. Los modelos entrenados en estos datos podrían reproducir discriminación sistémica si no se controlan adecuadamente.</p>
+            </div>
+          </div>
+          <div class="obj-item" style="border-color:rgba(224,156,47,.2)">
+            <div class="obj-item-icon" style="background:rgba(224,156,47,.12);color:var(--amber)"><i class="ti ti-lock"></i></div>
+            <div class="obj-item-text">
+              <h4>Datos sensibles</h4>
+              <p>El dataset incluye información financiera personal (ingresos, deudas, historial crediticio). Este proyecto usa datos anonimizados de acceso público en Kaggle, sin identificación individual de personas.</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="obj-item" style="border-color:rgba(45,184,126,.2)">
+            <div class="obj-item-icon" style="background:rgba(45,184,126,.12);color:var(--green)"><i class="ti ti-license"></i></div>
+            <div class="obj-item-text">
+              <h4>Licencia y fuente</h4>
+              <p>Datos de acceso público en Kaggle bajo uso académico/investigativo. El dataset fue publicado originalmente por Lending Club. Uso exclusivamente educativo en el contexto de la UTB.</p>
+            </div>
+          </div>
+          <div class="obj-item" style="border-color:rgba(124,111,205,.2)">
+            <div class="obj-item-icon" style="background:rgba(124,111,205,.12);color:var(--violet)"><i class="ti ti-clock"></i></div>
+            <div class="obj-item-text">
+              <h4>Limitaciones del análisis</h4>
+              <p>Los datos cubren 2007–2018 y no reflejan el mercado crediticio actual. Las conclusiones son descriptivas del periodo analizado. Los modelos futuros deben validarse con datos recientes antes de cualquier aplicación real.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px 14px;border-radius:8px;background:rgba(45,184,126,.06);border:1px solid rgba(45,184,126,.15)">
+        <p style="font-size:12px;color:var(--text-secondary);font-weight:300">
+          <i class="ti ti-info-circle" style="color:var(--green);margin-right:5px"></i>
+          <strong style="color:var(--text-primary);font-weight:500">Compromiso ético:</strong>
+          Este proyecto tiene fines exclusivamente académicos. No se utilizan datos de personas identificables, no se toman decisiones crediticias reales con estos resultados, y se reconoce que cualquier modelo predictivo derivado debe evaluarse con criterios de equidad antes de su aplicación.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /page -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const gc = 'rgba(255,255,255,0.06)';
+const tc = '#8a93b4';
+const base = { responsive: true, maintainAspectRatio: false };
+
+/* ── Registro global de charts ── */
+const allCharts = [];
+function makeChart(id, config) {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  const c = new Chart(el, config);
+  allCharts.push(c);
+  return c;
+}
+
+function sw(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('on'));
+  document.getElementById('p-' + id).classList.add('on');
+  btn.classList.add('on');
+  setTimeout(() => allCharts.forEach(c => { try { c.resize(); } catch(e){} }), 60);
+}
+
+/* ── Truco: hacer todos los paneles visibles temporalmente
+        para que Chart.js pueda leer el tamaño del canvas ── */
+document.querySelectorAll('.panel').forEach(p => {
+  p.style.display = 'block';
+  p.style.visibility = 'hidden';
+  p.style.position = 'absolute';
+});
+
+/* ── Gráficos panel Resumen ── */
+makeChart('ch1', {
+  type: 'bar',
+  data: {
+    labels: ['Columnas'],
+    datasets: [
+      { label: 'Antes',   data: [151], backgroundColor: '#4d8ef0', borderRadius: 6, barPercentage: 0.5 },
+      { label: 'Después', data: [107], backgroundColor: '#2db87e', borderRadius: 6, barPercentage: 0.5 }
+    ]
+  },
+  options: { ...base, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: tc }, grid: { color: gc } }, y: { ticks: { color: tc }, grid: { color: gc }, beginAtZero: true, max: 180 } } }
+});
+
+makeChart('ch2', {
+  type: 'doughnut',
+  data: {
+    labels: ['Eliminadas', 'Imputadas mod.', 'Imputadas bajo', 'Sin nulos'],
+    datasets: [{ data: [44, 25, 18, 64], backgroundColor: ['#e55454','#e09c2f','#2db87e','#4d8ef0'], borderWidth: 2, borderColor: '#0a0e1a', hoverOffset: 6 }]
+  },
+  options: { ...base, plugins: { legend: { display: false } }, cutout: '68%' }
+});
+
+/* ── Gráficos panel Nulos ── */
+const nullCols = [
+  { name: 'plazo_aplazamiento',            pct: 99.9 },
+  { name: 'estado_prestamo_dificultad',    pct: 99.8 },
+  { name: 'gasto_adicional_proyectado',    pct: 99.7 },
+  { name: 'saldo_pendiente_dificultad',    pct: 99.6 },
+  { name: 'plazo_acuerdo_deuda',           pct: 98.2 },
+  { name: 'porcentaje_acuerdo_deuda',      pct: 98.1 },
+  { name: 'monto_acuerdo_deuda',           pct: 98.0 },
+  { name: 'fecha_acuerdo_deuda',           pct: 97.9 },
+  { name: 'estado_dificultad',             pct: 97.2 },
+  { name: 'razon_dificultad',              pct: 96.8 },
+  { name: 'tipo_dificultad',               pct: 96.5 },
+  { name: 'flag_dificultad',               pct: 85.3 },
+  { name: 'fecha_proximo_pago',            pct: 72.1 },
+  { name: 'meses_desde_ultimo_registro',   pct: 62.4 },
+  { name: 'meses_desde_mora_tarjeta',      pct: 58.1 }
+];
+
+const barsEl = document.getElementById('bars-nulos');
+nullCols.forEach(c => {
+  const over = c.pct > 50;
+  barsEl.innerHTML += `<div class="bar-row">
+    <div class="bar-lbl" title="${c.name}">${c.name}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${c.pct}%;background:${over ? '#e55454' : '#e09c2f'}"></div></div>
+    <div class="bar-pct">${c.pct.toFixed(1)}%</div>
+  </div>`;
+});
+
+makeChart('ch5', {
+  type: 'doughnut',
+  data: {
+    labels: ['Mediana (numéricas)', 'Moda (texto)'],
+    datasets: [{ data: [29, 14], backgroundColor: ['#7c6fcd','#d4537e'], borderWidth: 2, borderColor: '#0a0e1a', hoverOffset: 6 }]
+  },
+  options: { ...base, plugins: { legend: { display: false } }, cutout: '68%' }
+});
+
+const progs = [
+  { lbl: 'Columnas eliminadas (>50% nulos)',  val: 100, color: '#e55454', txt: '44 de 44' },
+  { lbl: 'Imputación moderada (5–50%)',        val: 100, color: '#e09c2f', txt: '25 de 25' },
+  { lbl: 'Imputación baja (<5%)',              val: 100, color: '#2db87e', txt: '18 de 18' },
+  { lbl: 'Columnas sin nulos (intactas)',       val: 100, color: '#4d8ef0', txt: '64 de 64' }
+];
+const progEl = document.getElementById('prog-bars');
+progs.forEach(p => {
+  progEl.innerHTML += `<div class="prog-wrap">
+    <div class="prog-header"><span>${p.lbl}</span><strong>${p.txt}</strong></div>
+    <div class="prog-track"><div class="prog-fill" style="width:${p.val}%;background:${p.color}"></div></div>
+  </div>`;
+});
+
+/* ── Gráficos panel Duplicados ── */
+makeChart('ch7', {
+  type: 'bar',
+  data: {
+    labels: ['Filas del dataset'],
+    datasets: [
+      { label: 'Antes',   data: [2260668], backgroundColor: '#4d8ef0', borderRadius: 6, barPercentage: 0.5 },
+      { label: 'Después', data: [2260668], backgroundColor: '#2db87e', borderRadius: 6, barPercentage: 0.5 }
+    ]
+  },
+  options: { ...base, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: tc }, grid: { color: gc } }, y: { ticks: { color: tc, callback: v => (v/1e6).toFixed(1)+'M' }, grid: { color: gc }, beginAtZero: true } } }
+});
+
+/* ── Gráficos panel Análisis ── */
+makeChart('ch-estado', {
+  type: 'doughnut',
+  data: {
+    labels: ['Pagado completamente','Vigente (en curso)','Cancelado por impago','En mora (31–120 días)','Otros / Gracia'],
+    datasets: [{ data: [1048559, 601779, 261655, 11591, 337084], backgroundColor: ['#2db87e','#4d8ef0','#e55454','#e09c2f','#7c6fcd'], borderWidth: 2, borderColor: '#0a0e1a', hoverOffset: 6 }]
+  },
+  options: { ...base, plugins: { legend: { display: false } }, cutout: '62%' }
+});
+
+const propData = [
+  { lbl: 'Consolidación de deudas', pct: 59.5 },
+  { lbl: 'Tarjeta de crédito',      pct: 20.1 },
+  { lbl: 'Mejoras del hogar',       pct: 6.8  },
+  { lbl: 'Pequeño negocio',         pct: 3.4  },
+  { lbl: 'Compra de auto',          pct: 2.5  },
+  { lbl: 'Gastos médicos',          pct: 2.0  },
+  { lbl: 'Viaje / Vacaciones',      pct: 1.5  },
+  { lbl: 'Otros',                   pct: 4.2  }
+];
+const propEl = document.getElementById('bars-proposito');
+const propColors = ['#4d8ef0','#7c6fcd','#2db87e','#e09c2f','#e55454','#d4537e','#1abc9c','#8a93b4'];
+propData.forEach((p, i) => {
+  propEl.innerHTML += `<div class="bar-row">
+    <div class="bar-lbl" title="${p.lbl}">${p.lbl}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${p.pct * 1.6}%;background:${propColors[i]}"></div></div>
+    <div class="bar-pct">${p.pct}%</div>
+  </div>`;
+});
+
+makeChart('ch-grade', {
+  type: 'bar',
+  data: {
+    labels: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+    datasets: [{
+      data: [435281, 603920, 537419, 324198, 184512, 92348, 31874],
+      backgroundColor: ['#2db87e','#4d8ef0','#7c6fcd','#e09c2f','#e07a2f','#e55454','#8b0000'],
+      borderRadius: 5
+    }]
+  },
+  options: { ...base, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: tc }, grid: { color: gc } }, y: { ticks: { color: tc, callback: v => (v/1000).toFixed(0)+'K' }, grid: { color: gc }, beginAtZero: true } } }
+});
+
+makeChart('ch-plazo', {
+  type: 'doughnut',
+  data: {
+    labels: ['36 meses (3 años)', '60 meses (5 años)'],
+    datasets: [{ data: [1550000, 710668], backgroundColor: ['#4d8ef0','#7c6fcd'], borderWidth: 2, borderColor: '#0a0e1a', hoverOffset: 6 }]
+  },
+  options: { ...base, plugins: { legend: { display: false } }, cutout: '62%' }
+});
+
+/* ── Gráficos panel Dataset ── */
+makeChart('ch8', {
+  type: 'doughnut',
+  data: {
+    labels: ['float64', 'object', 'int64'],
+    datasets: [{ data: [94, 41, 16], backgroundColor: ['#4d8ef0','#7c6fcd','#2db87e'], borderWidth: 2, borderColor: '#0a0e1a', hoverOffset: 6 }]
+  },
+  options: { ...base, plugins: { legend: { display: false } }, cutout: '68%' }
+});
+
+makeChart('ch9', {
+  type: 'doughnut',
+  data: {
+    labels: ['Pagos', 'Préstamo', 'Crédito', 'Prestatario', 'Otros'],
+    datasets: [{ data: [40, 35, 30, 28, 18], backgroundColor: ['#4d8ef0','#7c6fcd','#2db87e','#e09c2f','#d4537e'], borderWidth: 2, borderColor: '#0a0e1a', hoverOffset: 6 }]
+  },
+  options: { ...base, plugins: { legend: { display: false } }, cutout: '68%' }
+});
+
+makeChart('ch3', {
+  type: 'bar',
+  data: {
+    labels: ['Columnas totales', 'Col. con nulos'],
+    datasets: [
+      { label: 'Antes',   data: [151, 87], backgroundColor: '#4d8ef0', borderRadius: 6, barPercentage: 0.6 },
+      { label: 'Después', data: [107, 0],  backgroundColor: '#2db87e', borderRadius: 6, barPercentage: 0.6 }
+    ]
+  },
+  options: { ...base, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: tc }, grid: { color: gc } }, y: { ticks: { color: tc }, grid: { color: gc }, beginAtZero: true } } }
+});
+
+/* ══════════════════════════════════════════
+   TABLA DE COLUMNAS — datos completos
+══════════════════════════════════════════ */
+const CATS = {
+  prestamo:    { label: 'Préstamo',    color: '#4d8ef0', bg: 'rgba(77,142,240,.15)' },
+  prestatario: { label: 'Prestatario', color: '#2db87e', bg: 'rgba(45,184,126,.15)' },
+  credito:     { label: 'Crédito',     color: '#7c6fcd', bg: 'rgba(124,111,205,.15)' },
+  pagos:       { label: 'Pagos',       color: '#e09c2f', bg: 'rgba(224,156,47,.15)' },
+  otros:       { label: 'Otros',       color: '#d4537e', bg: 'rgba(212,83,126,.15)' }
+};
+
+const COLS = [
+  ['id','id_prestamo','prestamo','Identificador único de cada préstamo en el sistema'],
+  ['member_id','id_miembro','prestatario','Identificador único del solicitante del préstamo'],
+  ['loan_amnt','monto_solicitado','prestamo','Monto total de dinero pedido por el prestatario'],
+  ['funded_amnt','monto_financiado','prestamo','Monto real aprobado y entregado al prestatario'],
+  ['funded_amnt_inv','monto_financiado_inversores','pagos','Porción del préstamo financiada por los inversores'],
+  ['term','plazo','prestamo','Duración del préstamo: 36 meses (3 años) o 60 meses (5 años)'],
+  ['int_rate','tasa_interes','prestamo','Tasa de interés anual cobrada sobre el préstamo (%)'],
+  ['installment','cuota_mensual','pagos','Monto fijo que el prestatario debe pagar cada mes'],
+  ['grade','calificacion','prestamo','Calificación de riesgo: A (muy seguro) hasta G (alto riesgo)'],
+  ['sub_grade','subcalificacion','prestamo','Subclasificación más fina dentro de cada calificación (A1–G5)'],
+  ['loan_status','estado_prestamo','prestamo','Estado actual: Pagado, Vigente, Cancelado, En mora, etc.'],
+  ['purpose','proposito','prestamo','Motivo del préstamo: deudas, tarjeta, hogar, negocio, etc.'],
+  ['title','titulo_prestamo','prestamo','Título descriptivo que el solicitante asigna al préstamo'],
+  ['issue_d','fecha_emision','prestamo','Mes y año en que el préstamo fue emitido/aprobado'],
+  ['pymnt_plan','plan_de_pago','pagos','Indica si el prestatario tiene un plan de pago especial'],
+  ['emp_title','titulo_empleo','prestatario','Cargo o título de trabajo del solicitante'],
+  ['emp_length','antiguedad_laboral','prestatario','Años trabajando en su empleo actual (< 1 año hasta 10+ años)'],
+  ['home_ownership','tipo_vivienda','prestatario','Situación de vivienda: RENT (alquila), OWN (propia), MORTGAGE (hipoteca)'],
+  ['annual_inc','ingreso_anual','prestatario','Ingreso anual bruto reportado por el solicitante en USD'],
+  ['verification_status','estado_verificacion','prestatario','Si el ingreso fue verificado: Verificado, Fuente verificada, No verificado'],
+  ['zip_code','codigo_postal','prestatario','Primeros 3 dígitos del código postal del solicitante'],
+  ['addr_state','estado_residencia','prestatario','Estado de EE. UU. donde reside el solicitante (ej. CA, NY, TX)'],
+  ['dti','relacion_deuda_ingreso','prestatario','Ratio deuda/ingreso: qué porcentaje del ingreso va a pagar deudas'],
+  ['earliest_cr_line','primera_linea_credito','credito','Fecha en que el solicitante abrió su primera línea de crédito'],
+  ['fico_range_low','fico_minimo','credito','Límite inferior del puntaje FICO (score crediticio) del solicitante'],
+  ['fico_range_high','fico_maximo','credito','Límite superior del puntaje FICO del solicitante'],
+  ['delinq_2yrs','moras_ultimos_2_anios','credito','Número de pagos atrasados en los últimos 2 años'],
+  ['inq_last_6mths','consultas_ultimos_6_meses','credito','Veces que solicitaron revisar su crédito en los últimos 6 meses'],
+  ['open_acc','cuentas_abiertas','credito','Número de líneas de crédito actualmente abiertas'],
+  ['pub_rec','registros_publicos_negativos','credito','Número de registros negativos públicos (quiebras, demandas, etc.)'],
+  ['revol_bal','saldo_rotativo','credito','Saldo total pendiente en tarjetas de crédito y créditos rotativos'],
+  ['revol_util','uso_credito_rotativo','credito','Porcentaje del límite de crédito rotativo que está siendo usado (%)'],
+  ['total_acc','total_cuentas_credito','credito','Número total de cuentas de crédito que ha tenido el solicitante'],
+  ['out_prncp','capital_pendiente','pagos','Monto del capital que aún no ha sido pagado'],
+  ['total_pymnt','total_pagado','pagos','Total de pagos recibidos hasta la fecha (capital + intereses)'],
+  ['total_rec_prncp','capital_recuperado','pagos','Porción del capital original que ya fue pagada'],
+  ['total_rec_int','intereses_recuperados','pagos','Total de intereses recibidos hasta la fecha'],
+  ['total_rec_late_fee','cargos_mora_recuperados','pagos','Total de cargos por mora que han sido cobrados'],
+  ['recoveries','recuperaciones','pagos','Monto recuperado después de que el préstamo fue cancelado por impago'],
+  ['last_pymnt_d','fecha_ultimo_pago','pagos','Mes y año en que se realizó el último pago registrado'],
+  ['last_pymnt_amnt','monto_ultimo_pago','pagos','Monto del último pago recibido en USD'],
+  ['next_pymnt_d','fecha_proximo_pago','pagos','Fecha programada para el siguiente pago (si el préstamo está vigente)'],
+  ['collection_recovery_fee','comision_recuperacion','pagos','Comisión pagada a la agencia de cobranza por recuperar el préstamo'],
+  ['last_credit_pull_d','ultima_consulta_credito','credito','Última vez que Lending Club consultó el historial crediticio del prestatario'],
+  ['last_fico_range_low','ultimo_fico_minimo','credito','Límite inferior del puntaje FICO en la última consulta realizada'],
+  ['last_fico_range_high','ultimo_fico_maximo','credito','Límite superior del puntaje FICO en la última consulta realizada'],
+  ['application_type','tipo_solicitud','prestamo','Si la solicitud es individual (Individual) o conjunta (Joint App)'],
+  ['annual_inc_joint','ingreso_anual_conjunto','prestatario','Ingreso anual combinado en solicitudes conjuntas (dos solicitantes)'],
+  ['dti_joint','relacion_deuda_ingreso_conjunto','prestatario','Ratio deuda/ingreso en solicitudes con dos solicitantes'],
+  ['acc_now_delinq','cuentas_en_mora_actual','credito','Número de cuentas actualmente en estado de mora'],
+  ['tot_coll_amt','total_cobros','credito','Monto total enviado a cobranza históricamente'],
+  ['tot_cur_bal','saldo_actual_total','credito','Saldo total en todas las cuentas de crédito activas actualmente'],
+  ['pub_rec_bankruptcies','quiebras_registradas','credito','Número de quiebras declaradas que aparecen en registros públicos'],
+  ['tax_liens','gravamenes_fiscales','credito','Número de gravámenes fiscales registrados (deudas con el gobierno)'],
+  ['delinq_amnt','monto_en_mora','credito','Monto total actualmente en estado de mora'],
+  ['num_actv_bc_tl','tarjetas_activas','credito','Número de tarjetas de crédito que están activamente en uso'],
+  ['num_bc_sats','tarjetas_al_dia','credito','Número de tarjetas de crédito con pagos al día (sin mora)'],
+  ['num_il_tl','total_prestamos_plazo','credito','Número total de préstamos a plazo fijo que ha tenido'],
+  ['pct_tl_nvr_dlq','porcentaje_sin_mora','credito','Porcentaje de todas las cuentas que nunca han tenido mora (%)'],
+  ['percent_bc_gt_75','tarjetas_uso_mayor_75','credito','Porcentaje de tarjetas usando más del 75% de su límite (señal de riesgo)'],
+  ['hardship_flag','flag_dificultad','otros','Indica si el prestatario está en un programa de ayuda por dificultad financiera'],
+  ['disbursement_method','metodo_desembolso','otros','Forma en que se entregó el dinero: transferencia o cheque'],
+  ['debt_settlement_flag','flag_acuerdo_deuda','otros','Indica si el préstamo fue resuelto mediante un acuerdo de deuda'],
+  ['policy_code','codigo_politica','otros','Código de política de crédito aplicada (1 = política estándar)'],
+  ['chargeoff_within_12_mths','cancelaciones_12_meses','pagos','Número de cuentas canceladas por impago en los últimos 12 meses'],
+  ['initial_list_status','estado_inicial_lista','prestamo','Estado inicial del préstamo en la lista de Lending Club (w = espera, f = fraccionado)'],
+  ['mths_since_last_delinq','meses_desde_ultima_mora','credito','Meses transcurridos desde la última vez que tuvo un pago atrasado'],
+  ['collections_12_mths_ex_med','cobros_12_meses','credito','Número de cobros realizados en los últimos 12 meses (excluye médicos)'],
+  ['mths_since_last_major_derog','meses_desde_derogacion_mayor','credito','Meses desde el último evento crediticio negativo grave'],
+  ['tot_hi_cred_lim','limite_credito_total','credito','Límite de crédito total disponible sumando todas las cuentas'],
+  ['total_bal_ex_mort','saldo_total_sin_hipoteca','credito','Saldo total de todas las deudas, excluyendo la hipoteca'],
+  ['total_bc_limit','limite_total_tarjetas','credito','Límite de crédito total entre todas las tarjetas que posee'],
+];
+
+const tbody = document.getElementById('col-tbody');
+let allRows = [];
+
+COLS.forEach(([orig, esp, cat, desc]) => {
+  const c = CATS[cat];
+  const tr = document.createElement('tr');
+  tr.dataset.orig = orig.toLowerCase();
+  tr.dataset.esp  = esp.toLowerCase();
+  tr.dataset.cat  = cat.toLowerCase();
+  tr.dataset.desc = desc.toLowerCase();
+  tr.innerHTML = `
+    <td>${orig}</td>
+    <td>${esp}</td>
+    <td><span class="cat-badge" style="background:${c.bg};color:${c.color}">${c.label}</span></td>
+    <td>${desc}</td>`;
+  tbody.appendChild(tr);
+  allRows.push(tr);
+});
+
+document.getElementById('col-count').textContent = `Mostrando ${allRows.length} de ${allRows.length} columnas`;
+
+function filtrarColumnas() {
+  const q = document.getElementById('col-search').value.toLowerCase().trim();
+  let visible = 0;
+  allRows.forEach(tr => {
+    const match = !q || tr.dataset.orig.includes(q) || tr.dataset.esp.includes(q)
+                      || tr.dataset.cat.includes(q) || tr.dataset.desc.includes(q);
+    tr.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  document.getElementById('col-count').textContent = `Mostrando ${visible} de ${allRows.length} columnas`;
+}
+/* ── Restaurar paneles y forzar resize de charts ── */
+document.querySelectorAll('.panel').forEach(p => {
+  p.style.display = '';
+  p.style.visibility = '';
+  p.style.position = '';
+});
+allCharts.forEach(c => { try { c.resize(); } catch(e){} });
+</script>
+</body>
+</html>
